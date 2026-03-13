@@ -293,10 +293,10 @@
                 totalSelesai += d.Selesai;
             });
             let totalBelum = totalTarget - totalSelesai;
-            let persenBelum = totalTarget === 0 ? 0 : ((totalBelum / totalTarget) * 100).toFixed(1);
+            let persenSelesai = totalTarget === 0 ? 0 : ((totalSelesai / totalTarget) * 100).toFixed(1);
             
             // Set Text Center Donut
-            document.getElementById('donutCenterText').innerText = persenBelum.replace('.', ',') + '%';
+            document.getElementById('donutCenterText').innerText = persenSelesai.replace('.', ',') + '%';
 
             // 1. INISIALISASI DONUT CHART
             const ctxDonut = document.getElementById('donutChart').getContext('2d');
@@ -423,4 +423,5 @@
 </body>
 
 </html>
+
 
