@@ -1,167 +1,100 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Monitoring SKTH 2025</title>
-    <!-- Tailwind CSS untuk Styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js untuk Grafik -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- PapaParse untuk membaca format CSV dari Google Sheets -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        
-        body { 
-            background-color: #262c2e; 
-            color: #ffffff; 
-            font-family: 'Inter', sans-serif; 
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
-        /* Warna Khusus Sesuai Desain */
-        .text-header { color: #ebdcc0; }
-        .bg-panel-1 { background-color: #395c64; }
-        .bg-panel-2-top { background-color: #b66545; color: #1f2937; }
-        .bg-panel-2-bot { background-color: #e2cd8a; color: #1f2937; }
-        .bg-panel-3 { background-color: #ebdcc0; }
-        
-        .divider-dotted {
-            border-top: 3px dotted #ebdcc0;
-            margin: 4px 0;
-            opacity: 0.7;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Styling Grid untuk Panel Tengah */
-        .middle-grid-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            height: 40px;
-            align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.15);
-        }
-        .middle-grid-row:last-child {
-            border-bottom: none;
-        }
-        .grid-cell {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            border-left: 1px solid rgba(0,0,0,0.15);
-            padding-left: 8px;
-        }
-        .grid-cell-first {
-            justify-content: flex-end;
-            padding-right: 12px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .number-box {
-            background-color: #395c64;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .number-box-clear {
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-            padding: 2px 8px;
-        }
+<title>Dashboard Monitoring SKTH 2025</title>
 
-        /* Center Text pada Donut Chart */
-        .chart-container {
-            position: relative;
-            height: 250px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .donut-center-text {
-            position: absolute;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            pointer-events: none;
-        }
-    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body{
+background-color:#262c2e;
+color:#ffffff;
+font-family:'Inter',sans-serif;
+margin:0;
+padding:20px;
+min-height:100vh;
+}
+
+.text-header{color:#ebdcc0;}
+
+.bg-panel-1{background-color:#395c64;}
+.bg-panel-3{background-color:#ebdcc0;}
+
+.chart-container{
+position:relative;
+height:250px;
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+</style>
 </head>
+
 <body class="flex flex-col gap-4">
 
-    <!-- Header -->
-    <header class="mb-2">
-        <h1 class="text-3xl font-bold text-header">SKTH 2025</h1>
-    </header>
+<header>
+<h1 class="text-3xl font-bold text-header">SKTH 2025</h1>
+</header>
 
-    <!-- Main Dashboard Container -->
-    <main class="flex flex-col lg:flex-row gap-4 w-full" id="dashboard-content" style="display: none;">
-        
-        <!-- Panel 1: Donut Chart -->
-        <section class="bg-panel-1 rounded shadow-lg p-6 flex flex-col items-center justify-center lg:w-[28%]">
-            <div class="chart-container">
-                <canvas id="donutChart"></canvas>
-                <div id="donutCenterText" class="donut-center-text">0%</div>
-            </div>
-            <!-- Custom Legend -->
-            <div class="flex gap-6 mt-4 text-sm font-semibold">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full inline-block" style="background-color: #b66545;"></span> Selesai
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full inline-block" style="background-color: #262c2e;"></span> Belum
-                </div>
-            </div>
-        </section>
+<main class="flex flex-col lg:flex-row gap-4 w-full" id="dashboard-content" style="display:none;">
 
-        <!-- Panel 2: Top & Bottom Regions -->
-        <section class="flex flex-col gap-1 lg:w-[24%]">
-            <!-- Top Regions -->
-            <div class="bg-panel-2-top rounded-t shadow-lg flex-1 p-4 flex flex-col justify-center" id="top-regions">
-                <!-- Data akan di-inject via JS -->
-            </div>
-            
-            <div class="divider-dotted"></div>
+<!-- BAR CHART (KIRI) -->
+<section class="bg-panel-3 rounded shadow-lg p-4 lg:w-[70%] relative">
 
-            <!-- Bottom Regions -->
-            <div class="bg-panel-2-bot rounded-b shadow-lg flex-1 p-4 flex flex-col justify-center" id="bottom-regions">
-                <!-- Data akan di-inject via JS -->
-            </div>
-        </section>
+<div style="height:320px;width:100%;">
+<canvas id="barChart"></canvas>
+</div>
 
-        <!-- Panel 3: Stacked Bar Chart -->
-        <section class="bg-panel-3 rounded shadow-lg p-4 lg:w-[48%] relative">
-            <div style="height: 300px; width: 100%;">
-                <canvas id="barChart"></canvas>
-            </div>
-        </section>
+</section>
 
-    </main>
 
-    <!-- Loading Indicator -->
-    <div id="loading" class="text-center text-header text-xl mt-20">
-        Memuat Data...
-    </div>
+<!-- DONUT CHART (KANAN) -->
+<section class="bg-panel-1 rounded shadow-lg p-6 flex flex-col items-center justify-center lg:w-[30%]">
 
-    <!-- Script Logika & Render -->
-    <script>
-        // ==========================================
-        // KONFIGURASI GOOGLE SPREADSHEET
-        // ==========================================
-        // 1. Buat Google Sheet dengan kolom: Kode, Wilayah, Target, Selesai
-        // 2. Klik File -> Bagikan -> Publikasikan ke web
-        // 3. Pilih "Seluruh Dokumen" & Format "Nilai yang dipisahkan koma (.csv)"
-        // 4. Paste linknya di bawah ini. Jika kosong, web akan memakai Data Dummy.
-        
-        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vReacWakO-6uszfT7C3HWESMzLNRy63-pInklJSPYlqLNryMFXB9nwr6_2Z2YKbaBCBAdb5uPbICsa1/pub?output=csv"; 
+<div class="chart-container">
+<canvas id="donutChart"></canvas>
+</div>
 
-        // Data Dummy (Jika Spreadsheet belum disambungkan)
-        const mockDataCSV = `Kode,Wilayah,Target,Selesai
+<div class="flex gap-6 mt-4 text-sm font-semibold">
+
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full inline-block" style="background:#b66545;"></span>
+Selesai
+</div>
+
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full inline-block" style="background:#262c2e;"></span>
+Belum
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<div id="loading" class="text-center text-header text-xl mt-20">
+Memuat Data...
+</div>
+
+
+
+<script>
+
+const GOOGLE_SHEET_CSV_URL = "";
+
+const mockDataCSV = `Kode,Wilayah,Target,Selesai
 3306,Purworejo,100,35
 3372,Kota Surakarta,100,29
 3304,Banjarnegara,100,24
@@ -198,230 +131,214 @@
 3375,Kota Pekalongan,100,0
 3376,Kota Tegal,100,0`;
 
-        // Warna Tema
-        const colors = {
-            selesaiDonut: '#b66545', // Orange/Rust
-            belumDonut: '#262c2e',   // Dark Gray
-            selesaiBar: '#395c64',   // Dark Teal
-            belumBar: '#b66545'      // Orange/Rust
-        };
 
-        // Fungsi Memuat Data
-        async function loadData() {
-            return new Promise(async (resolve) => {
-                let csvString = mockDataCSV;
+const colors={
+selesaiDonut:'#b66545',
+belumDonut:'#262c2e',
+selesaiBar:'#395c64',
+belumBar:'#b66545'
+};
 
-                if (GOOGLE_SHEET_CSV_URL && GOOGLE_SHEET_CSV_URL.trim() !== "") {
-                    try {
-                        const res = await fetch(GOOGLE_SHEET_CSV_URL);
-                        if (res.ok) {
-                            csvString = await res.text();
-                        } else {
-                            console.warn("Gagal fetch Spreadsheet, menggunakan data dummy.");
-                        }
-                    } catch (e) {
-                        console.warn("Error fetch Spreadsheet, menggunakan data dummy.", e);
-                    }
-                }
 
-                Papa.parse(csvString, {
-                    header: true,
-                    dynamicTyping: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        // Filter data yang valid saja
-                        const data = results.data.filter(d => d.Wilayah && d.Target);
-                        resolve(data);
-                    }
-                });
-            });
-        }
+async function loadData(){
 
-        // Render Panel Tengah (Top & Bottom Region)
-        function renderMiddlePanel(data) {
-            // Urutkan berdasarkan Selesai terbanyak
-            const sortedDesc = [...data].sort((a, b) => b.Selesai - a.Selesai);
-            const top3 = sortedDesc.slice(0, 3);
-            
-            // Urutkan berdasarkan Selesai paling sedikit (biasanya 0)
-            const sortedAsc = [...data].sort((a, b) => a.Selesai - b.Selesai);
-            const bottom3 = sortedAsc.slice(0, 3);
+return new Promise(async(resolve)=>{
 
-            const topContainer = document.getElementById('top-regions');
-            const botContainer = document.getElementById('bottom-regions');
+let csvString=mockDataCSV;
 
-            let topHTML = '';
-            top3.forEach(item => {
-                topHTML += `
-                <div class="middle-grid-row">
-                    <div class="grid-cell-first">${item.Wilayah}</div>
-                    <div class="grid-cell"><span class="number-box">${item.Selesai}</span></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>`;
-            });
-            topContainer.innerHTML = topHTML;
+if(GOOGLE_SHEET_CSV_URL && GOOGLE_SHEET_CSV_URL.trim()!==""){
 
-            let botHTML = '';
-            bottom3.forEach(item => {
-                botHTML += `
-                <div class="middle-grid-row">
-                    <div class="grid-cell-first">${item.Wilayah}</div>
-                    <div class="grid-cell"><span class="number-box-clear">${item.Selesai}</span></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>`;
-            });
-            botContainer.innerHTML = botHTML;
-        }
+try{
 
-        // Render Dashboard Keseluruhan
-        async function initDashboard() {
-            const data = await loadData();
-            
-            // Sembunyikan loading, tampilkan dashboard
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('dashboard-content').style.display = 'flex';
+const res=await fetch(GOOGLE_SHEET_CSV_URL);
 
-            renderMiddlePanel(data);
+if(res.ok){
+csvString=await res.text();
+}
 
-            // Perhitungan Total untuk Donut Chart
-            let totalTarget = 0;
-            let totalSelesai = 0;
-            data.forEach(d => {
-                totalTarget += d.Target;
-                totalSelesai += d.Selesai;
-            });
-            let totalBelum = totalTarget - totalSelesai;
-            let persenSelesai = totalTarget === 0 ? 0 : ((totalSelesai / totalTarget) * 100).toFixed(1);
-            
-            // Set Text Center Donut
-            document.getElementById('donutCenterText').innerText = persenSelesai.replace('.', ',') + '%';
+}catch(e){}
 
-            // 1. INISIALISASI DONUT CHART
-            const ctxDonut = document.getElementById('donutChart').getContext('2d');
-            new Chart(ctxDonut, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Selesai', 'Belum'],
-                    datasets: [{
-                        data: [totalSelesai, totalBelum],
-                        backgroundColor: [colors.selesaiDonut, colors.belumDonut],
-                        borderWidth: 1,
-                        borderColor: '#ebdcc0'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { display: false }, // Legend custom di HTML
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let val = context.raw;
-                                    let pct = ((val / totalTarget) * 100).toFixed(1) + '%';
-                                    return ` ${context.label}: ${val} (${pct})`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+}
 
-            // Persiapan Data Stacked Bar Chart (100%)
-            const labels = [];
-            const dataSelesaiPct = [];
-            const dataBelumPct = [];
+Papa.parse(csvString,{
+header:true,
+dynamicTyping:true,
+skipEmptyLines:true,
+complete:function(results){
 
-            // Sort data seperti gambar (Top progres di kiri)
-            const barData = [...data].sort((a, b) => {
-                let pctA = a.Selesai / a.Target;
-                let pctB = b.Selesai / b.Target;
-                return pctB - pctA;
-            });
+const data=results.data.filter(d=>d.Wilayah && d.Target);
+resolve(data);
 
-            barData.forEach(d => {
-                labels.push(d.Kode.toString());
-                let selesaiPct = (d.Selesai / d.Target) * 100;
-                let belumPct = 100 - selesaiPct;
-                dataSelesaiPct.push(selesaiPct);
-                dataBelumPct.push(belumPct);
-            });
+}
+});
 
-            // 2. INISIALISASI BAR CHART
-            const ctxBar = document.getElementById('barChart').getContext('2d');
-            new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Selesai',
-                            data: dataSelesaiPct,
-                            backgroundColor: colors.selesaiBar,
-                            barPercentage: 0.6
-                        },
-                        {
-                            label: 'Belum',
-                            data: dataBelumPct,
-                            backgroundColor: colors.belumBar,
-                            barPercentage: 0.6
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: { display: false },
-                            ticks: { 
-                                maxRotation: 45, 
-                                minRotation: 45,
-                                font: { size: 10 },
-                                color: '#1f2937'
-                            }
-                        },
-                        y: {
-                            stacked: true,
-                            max: 100,
-                            grid: { color: 'rgba(0,0,0,0.1)' },
-                            ticks: {
-                                callback: function(value) { return value + "%" },
-                                color: '#1f2937'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#1f2937',
-                                usePointStyle: true,
-                                boxWidth: 10
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` ${context.dataset.label}: ${context.raw.toFixed(1)}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
+});
 
-        // Jalankan Script saat halaman siap
-        window.addEventListener('DOMContentLoaded', initDashboard);
+}
 
-    </script>
+
+
+async function initDashboard(){
+
+const data=await loadData();
+
+document.getElementById('loading').style.display='none';
+document.getElementById('dashboard-content').style.display='flex';
+
+
+let totalTarget=0;
+let totalSelesai=0;
+
+data.forEach(d=>{
+totalTarget+=d.Target;
+totalSelesai+=d.Selesai;
+});
+
+let totalBelum=totalTarget-totalSelesai;
+
+
+
+const ctxDonut=document.getElementById('donutChart').getContext('2d');
+
+new Chart(ctxDonut,{
+type:'doughnut',
+data:{
+labels:['Selesai','Belum'],
+datasets:[{
+data:[totalSelesai,totalBelum],
+backgroundColor:[
+colors.selesaiDonut,
+colors.belumDonut
+],
+borderWidth:1,
+borderColor:'#ebdcc0'
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+cutout:'70%',
+plugins:{
+legend:{display:false},
+tooltip:{
+callbacks:{
+label:function(context){
+
+let val=context.raw;
+let pct=((val/totalTarget)*100).toFixed(1)+'%';
+
+return context.label+': '+val+' ('+pct+')';
+
+}
+}
+}
+}
+}
+});
+
+
+
+const labels=[];
+const dataSelesaiPct=[];
+const dataBelumPct=[];
+
+
+const barData=[...data].sort((a,b)=>{
+
+let pctA=a.Selesai/a.Target;
+let pctB=b.Selesai/b.Target;
+
+return pctB-pctA;
+
+});
+
+
+barData.forEach(d=>{
+
+labels.push(d.Kode.toString());
+
+let selesaiPct=(d.Selesai/d.Target)*100;
+let belumPct=100-selesaiPct;
+
+dataSelesaiPct.push(selesaiPct);
+dataBelumPct.push(belumPct);
+
+});
+
+
+
+const ctxBar=document.getElementById('barChart').getContext('2d');
+
+new Chart(ctxBar,{
+type:'bar',
+data:{
+labels:labels,
+datasets:[
+{
+label:'Selesai',
+data:dataSelesaiPct,
+backgroundColor:colors.selesaiBar,
+barPercentage:0.6
+},
+{
+label:'Belum',
+data:dataBelumPct,
+backgroundColor:colors.belumBar,
+barPercentage:0.6
+}
+]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+scales:{
+x:{
+stacked:true,
+grid:{display:false},
+ticks:{
+maxRotation:45,
+minRotation:45,
+font:{size:10},
+color:'#1f2937'
+}
+},
+y:{
+stacked:true,
+max:100,
+grid:{color:'rgba(0,0,0,0.1)'},
+ticks:{
+callback:function(value){
+return value+'%'
+},
+color:'#1f2937'
+}
+}
+},
+plugins:{
+legend:{
+position:'bottom',
+labels:{
+color:'#1f2937',
+usePointStyle:true,
+boxWidth:10
+}
+},
+tooltip:{
+callbacks:{
+label:function(context){
+return context.dataset.label+': '+context.raw.toFixed(1)+'%';
+}
+}
+}
+}
+}
+});
+
+}
+
+window.addEventListener('DOMContentLoaded',initDashboard);
+
+</script>
+
 </body>
-
 </html>
-
-
